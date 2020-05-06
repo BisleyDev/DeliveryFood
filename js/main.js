@@ -73,16 +73,21 @@ function notAuthorized() {
 
   function logIn(event) {
     event.preventDefault(); // отключение перезагрузки страницы после отправки формы
+    if (loginInput.value) {
+      login = loginInput.value;
+      localStorage.setItem('login_Delivery', login);
+  
+      toggleModalAuth();
+      buttonAuth.removeEventListener('click', toggleModalAuth);
+      closeAuth.removeEventListener('click', toggleModalAuth);
+      logInForm.removeEventListener('submit', logIn);
+      logInForm.reset(); // очистить поле логин
+      checkAuth();
+    } else {
+      event.preventDefault(); // отключение перезагрузки страницы после отправки формы
+      alert('Введите логин и пароль!');
+    }
 
-    login = loginInput.value;
-    localStorage.setItem('login_Delivery', login);
-
-    toggleModalAuth();
-    buttonAuth.removeEventListener('click', toggleModalAuth);
-    closeAuth.removeEventListener('click', toggleModalAuth);
-    logInForm.removeEventListener('submit', logIn);
-    logInForm.reset(); // очистить поле логин
-    checkAuth();
   }
 
 
