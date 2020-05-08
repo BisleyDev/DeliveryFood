@@ -14,6 +14,12 @@ const cardRestaurant = document.querySelector(".card-restaurant");
 
 let login = localStorage.getItem('login_Delivery');
 
+//проверка правильности ввода логина через регулярное выражение
+const valid = function(str) {
+	const nameReg = /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/;
+	return nameReg.test(str);
+};
+
 function toggleModal() {
 	modal.classList.toggle("is-open");
 }
@@ -32,6 +38,7 @@ function authorized() {
 	 buttonOut.style.display = '';
 	 buttonOut.removeEventListener('click', logOut);    
 	 checkAuth();
+	 openStartPage();
   }
 
   console.log("authorized");
@@ -48,32 +55,27 @@ function authorized() {
 
 function notAuthorized() {
   console.log("notAuthorized");
-
   function logIn(event) {
 	 event.preventDefault(); // отключение перезагрузки страницы после отправки формы
-
-	 if (loginInput.value.trim()) {
+	 if (valid(loginInput.value.trim())) {
 		login = loginInput.value;
-		localStorage.setItem('login_Delivery', login);
-  
+		localStorage.setItem('login_Delivery', login);  
 		toggleModalAuth();
 		buttonAuth.removeEventListener('click', toggleModalAuth);
 		closeAuth.removeEventListener('click', toggleModalAuth);
 		logInForm.removeEventListener('submit', logIn);
 		logInForm.reset(); // очистить поле логин
 		checkAuth();
-
 	 } else {
 		event.preventDefault(); // отключение перезагрузки страницы после отправки формы
 		alert('Введите логин и пароль!');
 	 }
-
   }
-  cardRestaurant.addEventListener('click', toggleModalAuth);
-  buttonAuth.addEventListener('click', toggleModalAuth);
- 
+  buttonAuth.addEventListener('click', toggleModalAuth); 
   closeAuth.addEventListener('click', toggleModalAuth);
   logInForm.addEventListener('submit', logIn);
+	//cardRestaurant.addEventListener('click', toggleModalAuth);
+
 }
 
 function checkAuth() {
@@ -84,8 +86,17 @@ function checkAuth() {
   }
 }
 
+function init() { 
+	cartButton.addEventListener("click", toggleModal);
+	closeBasket.addEventListener("click", toggleModal);
+	checkAuth();
 
-cartButton.addEventListener("click", toggleModal);
-closeBasket.addEventListener("click", toggleModal);
-checkAuth();
 
+	// подключение слайдера
+	new Swiper('.swiper-container', {
+		loop: true,
+		autoplay: true
+	});
+}
+
+ init();
