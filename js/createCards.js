@@ -6,6 +6,13 @@ const restaurants = document.querySelector('.restaurants');
 const menu = document.querySelector('.menu');
 const cardsMenu = document.querySelector('.cards-menu');
 const logo = document.querySelector('.logo');
+const restaurantTitle = document.querySelector('.restaurant-title');
+const rating = document.querySelector('.rating');
+const minPrice = document.querySelector('.price');
+const category = document.querySelector('.category');
+
+
+
 
 // асинхронная функция
 const getData = async function(url) {
@@ -18,16 +25,14 @@ const getData = async function(url) {
    return await response.json();   
 };
 
-
-
 function createCardsRestaurants(restaurant) {
-
    const { image, kitchen, name, price, products, stars,
-      time_of_delivery: timeOfDelivery
-   } = restaurant;
+      time_of_delivery: timeOfDelivery } = restaurant;
    
    const card = `
-		<a class="card card-restaurant" data-products="${products}">
+		<a class="card card-restaurant" 
+		data-products="${products}"
+		data-info="${[ name, price, stars, kitchen ]}">
 			<img src="${image}" alt="image" class="card-image"/>
 			<div class="card-text">
 				<div class="card-heading">
@@ -44,10 +49,8 @@ function createCardsRestaurants(restaurant) {
 			</div>
 		</a>
    `;
-
    cardsRestaurants.insertAdjacentHTML('afterbegin', card);
 }
-
 
 /* function createTitleRestaurant(name) {
    console.log(name);
@@ -68,14 +71,13 @@ function createCardsRestaurants(restaurant) {
 } */
 
 function createCardGood(goods) {
-   //console.log(goods);
 
    const { description, id, image, name, price } = goods;
-
-   const card = document.createElement('div');
+	const card = document.createElement('div');
+	
    card.className = 'card';
    card.insertAdjacentHTML('beforeend', `
-      <img src="${image}" alt="image" class="card-image"/>
+      <img src="${image}" alt="${name}" class="card-image"/>
 		<div class="card-text">
 			<div class="card-heading">
 				<h3 class="card-title card-title-reg">${name}</h3>
@@ -94,26 +96,32 @@ function createCardGood(goods) {
 				<strong class="card-price-bold">${price} ₽</strong>
 			</div>
 		</div>
-   `);
-
-
-
-   
+   `);   
    cardsMenu.insertAdjacentElement('beforeend', card);
 }
 
 function openListGoods(event) {
-   const target =  event.target;
-   
+	const target =  event.target;
+	
    if (localStorage.getItem('login_Delivery')) {
-      const restaurant = target.closest('.card-restaurant');
+		const restaurant = target.closest('.card-restaurant');
+		
       if (restaurant) {
+			const info = restaurant.dataset.info.split(',');
+			const [ name, price, stars, kitchen ] = info;
+
+			restaurantTitle.textContent = name;
+			minPrice.textContent = `От ${price} ₽`;
+			rating.textContent = stars;
+			category.textContent = kitchen;
+
          containerPromo.classList.add('hide');
          restaurants.classList.add('hide');
          menu.classList.remove('hide');   
          cardsMenu.textContent = ''; 
+			//createTitleRestaurant();
+			
 
-         //createTitleRestaurant();
          getData(`./db/${restaurant.dataset.products}`).then(function(data) {
             data.forEach(createCardGood);
          });
